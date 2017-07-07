@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 /**
  * Created by jacksen on 2017/7/7.
  */
-
 public class SuperTagGroup extends ViewGroup {
 
     private boolean isAppendMode = false;
