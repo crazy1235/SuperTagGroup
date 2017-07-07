@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="SuperTagGroup">
+
+        <attr name="is_append_mode" format="boolean" />
+
+        <attr name="horizontal_space" format="dimension" />
+
+        <attr name="vertical_space" format="dimension" />
+
+        <attr name="horizontal_padding" format="dimension" />
+
+        <attr name="vertical_padding" format="dimension" />
+
+        <attr name="text_size" format="dimension" />
+
+        <attr name="text_color" format="color" />
+
+        <attr name="corner_radius" format="dimension" />
+
+        <attr name="border_width" format="dimension" />
+
+        <attr name="border_color" format="color" />
+
+        <attr name="bg_color" format="color" />
+
+    </declare-styleable>
+
+</resources>
