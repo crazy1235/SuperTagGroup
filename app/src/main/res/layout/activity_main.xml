@@ -72,6 +72,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
+        android:padding="0dp"
         app:horizontal_space="5dp"
         app:vertical_space="5dp">
 
@@ -119,7 +120,7 @@
         <com.jacksen.taggroup.SuperTagView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_margin="10dp"
             android:text="Apollo"
             app:corner_radius="10dp" />
 

@@ -105,13 +105,11 @@ public class SuperTagGroup extends ViewGroup {
         int paddingRight = getPaddingRight();
         int paddingBottom = getPaddingBottom();
 
-        int linePaddingLeft = paddingLeft;
-        int linePaddingTop = paddingTop;
-
         // the width & height final result
         int resultWidth = 0;
         int resultHeight = 0;
 
+        int lineWidth = 0;
         int lineHeight = 0;
 
         for (int i = 0; i < getChildCount(); i++) {
@@ -123,26 +121,30 @@ public class SuperTagGroup extends ViewGroup {
             // measure child
             measureChild(child, widthMeasureSpec, heightMeasureSpec);
 
+            // 这里要记得加上子view的margin值
             MarginLayoutParams childLayoutParams = (MarginLayoutParams) child.getLayoutParams();
-
-            // remember add child's margin value
-            Log.d("SuperTagGroup", "childLayoutParams.leftMargin:" + childLayoutParams.leftMargin);
             int childWidth = child.getMeasuredWidth() + childLayoutParams.leftMargin + childLayoutParams.rightMargin;
             int childHeight = child.getMeasuredHeight() + childLayoutParams.topMargin + childLayoutParams.bottomMargin;
 
             lineHeight = Math.max(childHeight, lineHeight);
 
-            if (linePaddingLeft + childWidth + paddingRight >= widthSize) { // need a new line
-                linePaddingLeft = paddingLeft;
-                linePaddingTop += lineHeight + getChildYOffset(childLayoutParams);
-                lineHeight = 0;
+            if (lineWidth + childWidth + paddingRight + paddingLeft >= widthSize) { // 需要换一行
+                lineWidth = childWidth; // 新的一行的宽度
+                lineHeight = childHeight; // 新的一行的高度
+
+                resultWidth = Math.max(resultWidth, lineWidth); // 每一行都进行比较，最终得到最宽的值
+                resultHeight += lineHeight + getChildYOffset(childLayoutParams);
             } else {
-                linePaddingLeft += childWidth + getChildXOffset(childLayoutParams);
+                // 当前行的宽度
+                lineWidth += childWidth + getChildXOffset(childLayoutParams);
+                // 当前行最大的高度
+                lineHeight = Math.max(lineHeight, childHeight);
             }
         }
 
-
-        resultHeight = linePaddingTop + lineHeight + paddingBottom;
+        resultWidth += paddingRight + paddingLeft;
+        // 布局最终的高度
+        resultHeight += lineHeight + paddingBottom + paddingTop;
 
         setMeasuredDimension(widthMode == MeasureSpec.EXACTLY ? widthSize : resultWidth, heightMode == MeasureSpec.EXACTLY ? heightSize : resultHeight);
 
@@ -171,9 +173,53 @@ public class SuperTagGroup extends ViewGroup {
         int paddingRight = getPaddingRight();
         int paddingBottom = getPaddingBottom();
 
-        int childLeft = paddingLeft;
-        int childTop = paddingTop;
+        int lineWidth = 0;
+        int lineHeight = 0;
 
+        // 子view的左侧和顶部位置
+        int childLeft = 0;
+        int childTop = 0;
+
+        for (int i = 0; i < getChildCount(); i++) {
+            View child = getChildAt(i);
+            if (child.getVisibility() == View.GONE) {
+                continue;
+            }
+
+            MarginLayoutParams childLayoutParams = (MarginLayoutParams) child.getLayoutParams();
+            int childWidth = child.getMeasuredWidth() + childLayoutParams.leftMargin + childLayoutParams.rightMargin;
+            int childHeight = child.getMeasuredHeight() + childLayoutParams.topMargin + childLayoutParams.bottomMargin;
+
+
+            lineHeight = Math.max(lineHeight, childHeight);
+
+            if (lineWidth + childWidth + paddingRight + paddingLeft > getWidth()) { // 需要换行
+                childLeft = paddingLeft;
+                childTop += lineHeight + getChildYOffset(childLayoutParams);
+
+                lineWidth = 0;
+                lineHeight = childHeight;
+            }
+
+            lineWidth += childWidth + getChildXOffset(childLayoutParams);
+
+            // 布局
+            child.layout(childLeft + childLayoutParams.leftMargin, childTop + childLayoutParams.topMargin, childLeft + childLayoutParams.leftMargin + childWidth, childTop + childLayoutParams.topMargin + childHeight);
+
+            // 计算下一个子view X的位置
+            childLeft += childWidth + getChildXOffset(childLayoutParams);
+        }
+    }
+
+    /*@Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        // padding
+        int paddingLeft = getPaddingLeft();
+        int paddingTop = getPaddingTop();
+        int paddingRight = getPaddingRight();
+        int paddingBottom = getPaddingBottom();
+
+        int lineWith = 0;
         int lineHeight = 0;
 
         for (int i = 0; i < getChildCount(); i++) {
@@ -197,6 +243,7 @@ public class SuperTagGroup extends ViewGroup {
             childLeft += childWidth + horizontalSpace;
         }
     }
+*/
 
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
