@@ -3,11 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SuperTagGroup.iml" filepath="$PROJECT_DIR$/SuperTagGroup.iml" />
-      <module fileurl="file://E:\Android\github_workspace\SuperTagGroup\SuperTagGroup.iml" filepath="E:\Android\github_workspace\SuperTagGroup\SuperTagGroup.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://E:\Android\github_workspace\SuperTagGroup\app\app.iml" filepath="E:\Android\github_workspace\SuperTagGroup\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/taggroup/taggroup.iml" filepath="$PROJECT_DIR$/taggroup/taggroup.iml" />
-      <module fileurl="file://E:\Android\github_workspace\SuperTagGroup\taggroup\taggroup.iml" filepath="E:\Android\github_workspace\SuperTagGroup\taggroup\taggroup.iml" />
     </modules>
   </component>
 </project>

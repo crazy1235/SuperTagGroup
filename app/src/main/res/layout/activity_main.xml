@@ -8,24 +8,153 @@
     tools:context="com.jacksen.taggroup.demo.MainActivity">
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.jacksen.taggroup.SuperTagView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:text="喜欢你"
+            android:textSize="16sp"
+            app:bg_color="#afe1af"
+            app:border_width="1dp"
+            app:corner_radius="10dp"
+            app:horizontal_padding="20dp"
+            app:vertical_padding="10dp" />
+
+        <com.jacksen.taggroup.SuperTagView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:text="双眼动人"
+            android:textSize="16sp"
+            app:bg_color="#749fea"
+            app:border_width="0dp"
+            app:corner_radius="10dp"
+            app:horizontal_padding="20dp"
+            app:vertical_padding="10dp" />
+
+        <com.jacksen.taggroup.SuperTagView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:text="笑声更迷人"
+            android:textSize="16sp"
+            app:bg_color="#e5a4ed"
+            app:border_width="2dp"
+            app:corner_radius="10dp"
+            app:horizontal_padding="15dp"
+            app:vertical_padding="10dp" />
+
+    </LinearLayout>
+
     <com.jacksen.taggroup.SuperTagView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:background="@drawable/bg_tag_view"
-        android:text="你好啊，李银河"
-        android:textSize="20sp"
-        android:padding="10dp"
-        app:border_width="2dp"
+        android:text="添加更多"
+        android:textSize="16sp"
+        app:bg_color="#edb9a1"
+        app:border_width="0.5dp"
         app:corner_radius="10dp"
-        app:horizontal_padding="10dp"
-        app:vertical_padding="5dp" />
+        app:horizontal_padding="20dp"
+        app:is_append_tag="true"
+        app:vertical_padding="10dp" />
 
-    <TextView
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:background="#E0EEE0"
-        android:gravity="center"
-        android:text="hello, world!" />
+    <com.jacksen.taggroup.SuperTagGroup
+        android:id="@+id/tag_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        app:horizontal_space="5dp"
+        app:vertical_space="5dp">
+
+        <com.jacksen.taggroup.SuperTagView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="喜欢你"
+            android:textSize="16sp"
+            app:bg_color="#afe1af"
+            app:border_width="1dp"
+            app:corner_radius="10dp"
+            app:horizontal_padding="20dp"
+            app:vertical_padding="10dp" />
+
+        <com.jacksen.taggroup.SuperTagView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="那双眼动人"
+            android:textSize="16sp"
+            app:bg_color="#749fea"
+            app:border_width="0dp"
+            app:corner_radius="10dp"
+            app:horizontal_padding="25dp"
+            app:vertical_padding="10dp" />
+
+        <com.jacksen.taggroup.SuperTagView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="笑声迷人"
+            android:textSize="16sp"
+            app:bg_color="#e5a4ed"
+            app:border_width="2dp"
+            app:corner_radius="10dp"
+            app:horizontal_padding="20dp"
+            app:vertical_padding="10dp" />
+
+        <com.jacksen.taggroup.SuperTagView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Poseidon"
+            app:corner_radius="10dp"
+            app:horizontal_padding="20dp"
+            app:vertical_padding="10dp" />
+
+        <com.jacksen.taggroup.SuperTagView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="Apollo"
+            app:corner_radius="10dp" />
+
+        <com.jacksen.taggroup.SuperTagView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Zeus" />
+
+        <com.jacksen.taggroup.SuperTagView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hera" />
+
+        <com.jacksen.taggroup.SuperTagView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Medusa" />
+
+        <com.jacksen.taggroup.SuperTagView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Prometheus"
+            app:corner_radius="5dp" />
+
+        <com.jacksen.taggroup.SuperTagView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="添加更多"
+            android:textSize="16sp"
+            app:bg_color="#edb9a1"
+            app:border_width="0.5dp"
+            app:corner_radius="10dp"
+            app:horizontal_padding="20dp"
+            app:is_append_tag="true"
+            app:vertical_padding="10dp" />
+    </com.jacksen.taggroup.SuperTagGroup>
 
 </LinearLayout>

@@ -18,6 +18,10 @@ public class SuperTagUtil {
 
     public static final float DEFAULT_VERTICAL_PADDING = 5; // dp
 
+    public static final float DEFAULT_HORIZONTAL_SPACING = 10; // dp
+
+    public static final float DEFAULT_VERTICAL_SPACINTG = 10; // dp
+
     /**
      * tags selected type
      */

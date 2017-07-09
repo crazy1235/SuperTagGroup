@@ -7,8 +7,8 @@
     </style>
 
     <style name="SuperTagGroup.TagView">
-
-
+        <item name="horizontal_padding">15dp</item>
+        <item name="vertical_padding">8dp</item>
     </style>
 
 </resources>

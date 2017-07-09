@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -20,10 +21,6 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
     private int horizontalPadding;
 
     private int verticalPadding;
-
-    private float textSize;
-
-    private int textColor;
 
     private float cornerRadius;
 
@@ -44,6 +41,7 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
 
     private RectF borderRectF;
 
+
     public SuperTagView(Context context) {
         this(context, null);
     }
@@ -56,14 +54,12 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
         super(context, attrs, defStyleAttr);
 
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SuperTagView, defStyleAttr, R.style.SuperTagGroup_TagView);
+//        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SuperTagView);
 
         isAppendTag = ta.getBoolean(R.styleable.SuperTagView_is_append_tag, false);
 
         horizontalPadding = (int) ta.getDimension(R.styleable.SuperTagView_horizontal_padding, SuperTagUtil.dp2px(context, SuperTagUtil.DEFAULT_HORIZONTAL_PADDING));
         verticalPadding = (int) ta.getDimension(R.styleable.SuperTagView_vertical_padding, SuperTagUtil.dp2px(context, SuperTagUtil.DEFAULT_VERTICAL_PADDING));
-
-//        textSize = ta.getDimension(R.styleable.SuperTagGroup_text_size, 0);
-//        textColor = ta.getColor(R.styleable.SuperTagGroup_text_color, 0);
 
         cornerRadius = ta.getDimension(R.styleable.SuperTagView_corner_radius, 0);
 
@@ -95,10 +91,9 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
         cornerRadius = SuperTagUtil.dp2px(getContext(), cornerRadius);
 
         //
-//        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//        setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding);
 
-//        setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+//        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding);
 
         // init paint
         bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -113,12 +108,14 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
         // init rect
         bgRectF = new RectF();
         borderRectF = new RectF();
+
+        //
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        if (shouldCustomDraw){
+        if (shouldCustomDraw) {
             float left = borderWidth;
             float right = left + w - borderWidth * 2;
 
@@ -127,29 +124,16 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
 
             bgRectF.set(left, top, right, bottom);
 
-            borderRectF.set(0, 0, w, h);
-        }
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        if (shouldCustomDraw) {
-            // draw bg
-            canvas.drawRoundRect(bgRectF, cornerRadius, cornerRadius, bgPaint);
-
-            if (shouldDrawBorder()) {
-                // draw border
-                canvas.drawRoundRect(borderRectF, cornerRadius, cornerRadius, borderPaint);
+            if (borderWidth!=0){
+                borderRectF.set(borderWidth / 2, borderWidth / 2, w - borderWidth / 2, h - borderWidth / 2);
             }
-            canvas.translate(horizontalPadding, verticalPadding);
+
+            setBackground(generateBackgroundDrawable());
         }
-        super.onDraw(canvas);
     }
 
-    /**
-     * judge should draw the border or not
-     */
-    private boolean shouldDrawBorder() {
-        return borderWidth != 0;
+    private Drawable generateBackgroundDrawable() {
+        return new TagBgDrawable(bgColor, bgRectF, borderColor, borderRectF, borderWidth, cornerRadius);
     }
+
 }

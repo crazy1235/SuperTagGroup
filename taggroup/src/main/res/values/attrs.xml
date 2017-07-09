@@ -35,6 +35,7 @@
 
     </declare-styleable>
 
+    <attr name="SuperTagGroup" format="reference" />
 
     <declare-styleable name="SuperTagView">
 
@@ -53,5 +54,8 @@
         <attr name="bg_color" format="color" />
 
     </declare-styleable>
+
+    <attr name="SuperTagGroup.TagView" format="reference" />
+
 
 </resources>
