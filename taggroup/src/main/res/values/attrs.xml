@@ -5,9 +5,9 @@
 
         <attr name="is_append_mode" format="boolean" />
 
-        <attr name="horizontal_space" format="dimension" />
+        <attr name="horizontal_spacing" format="dimension" />
 
-        <attr name="vertical_space" format="dimension" />
+        <attr name="vertical_spacing" format="dimension" />
 
         <attr name="tag_horizontal_padding" format="dimension" />
 
@@ -26,6 +26,8 @@
         <attr name="tag_bg_color" format="color" />
 
         <attr name="tag_bg_drawable" format="reference" />
+
+        <attr name="max_selected_count" format="integer" />
 
         <attr name="select_type" format="enum">
             <enum name="none" value="0" />

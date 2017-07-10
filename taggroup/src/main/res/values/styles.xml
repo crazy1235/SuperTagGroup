@@ -2,12 +2,12 @@
 <resources>
 
     <style name="SuperTagGroup">
-
-
+        <item name="horizontal_spacing">8dp</item>
+        <item name="vertical_spacing">10dp</item>
     </style>
 
     <style name="SuperTagGroup.TagView">
-        <item name="horizontal_padding">15dp</item>
+        <item name="horizontal_padding">12dp</item>
         <item name="vertical_padding">8dp</item>
     </style>
 

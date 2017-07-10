@@ -2,11 +2,14 @@ package com.jacksen.taggroup;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.util.SparseIntArray;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+
+import java.util.List;
 
 /**
  * Created by jacksen on 2017/7/7.
@@ -19,9 +22,9 @@ public class SuperTagGroup extends ViewGroup {
 
     private float verticalSpace;
 
-    private float horizontalPadding;
+    private int horizontalPadding;
 
-    private float verticalPadding;
+    private int verticalPadding;
 
     private float textSize;
 
@@ -37,13 +40,14 @@ public class SuperTagGroup extends ViewGroup {
 
     private int tagBgDrawable;
 
+    private int maxSelectedNum;
 
-    ////
+    private OnTagClickListener onTagClickListener;
 
-    private final int DEFAULT_MAX_SELECTED_NUM = 5;
+    private MotionEvent motionEvent;
 
-    private final int maxSelectedNum = DEFAULT_MAX_SELECTED_NUM;
-
+    // 选中子view 的position集合
+    private SparseIntArray selectedViewPositions = new SparseIntArray();
 
     public SuperTagGroup(Context context) {
         this(context, null);
@@ -59,11 +63,11 @@ public class SuperTagGroup extends ViewGroup {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SuperTagGroup, defStyleAttr, R.style.SuperTagGroup);
         isAppendMode = ta.getBoolean(R.styleable.SuperTagGroup_is_append_mode, false);
 
-        horizontalSpace = ta.getDimension(R.styleable.SuperTagGroup_horizontal_space, SuperTagUtil.dp2px(context, SuperTagUtil.DEFAULT_HORIZONTAL_SPACING));
-        verticalSpace = ta.getDimension(R.styleable.SuperTagGroup_vertical_space, SuperTagUtil.dp2px(context, SuperTagUtil.DEFAULT_VERTICAL_SPACINTG));
+        horizontalSpace = ta.getDimension(R.styleable.SuperTagGroup_horizontal_spacing, 0);
+        verticalSpace = ta.getDimension(R.styleable.SuperTagGroup_vertical_spacing, 0);
 
-        horizontalPadding = ta.getDimension(R.styleable.SuperTagGroup_tag_horizontal_padding, 0);
-        verticalPadding = ta.getDimension(R.styleable.SuperTagGroup_tag_vertical_padding, 0);
+        horizontalPadding = (int) ta.getDimension(R.styleable.SuperTagGroup_tag_horizontal_padding, 0);
+        verticalPadding = (int) ta.getDimension(R.styleable.SuperTagGroup_tag_vertical_padding, 0);
 
         textSize = ta.getDimension(R.styleable.SuperTagGroup_tag_text_size, 0);
         textColor = ta.getColor(R.styleable.SuperTagGroup_tag_text_color, 0);
@@ -77,6 +81,8 @@ public class SuperTagGroup extends ViewGroup {
 
         tagBgDrawable = ta.getResourceId(R.styleable.SuperTagGroup_tag_bg_drawable, 0);
 
+        maxSelectedNum = ta.getInt(R.styleable.SuperTagGroup_max_selected_count, -1);
+
         ta.recycle();
 
         init();
@@ -85,8 +91,9 @@ public class SuperTagGroup extends ViewGroup {
     private void init() {
         horizontalSpace = SuperTagUtil.dp2px(getContext(), horizontalSpace);
         verticalSpace = SuperTagUtil.dp2px(getContext(), verticalSpace);
-    }
 
+        setClickable(true);
+    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -118,27 +125,37 @@ public class SuperTagGroup extends ViewGroup {
                 continue;
             }
 
+            if (!(child instanceof SuperTagView)) {
+                throw new IllegalStateException("SuperTagGroup can only has SuperTagView child");
+            }
+
             // measure child
             measureChild(child, widthMeasureSpec, heightMeasureSpec);
 
             // 这里要记得加上子view的margin值
-            MarginLayoutParams childLayoutParams = (MarginLayoutParams) child.getLayoutParams();
-            int childWidth = child.getMeasuredWidth() + childLayoutParams.leftMargin + childLayoutParams.rightMargin;
-            int childHeight = child.getMeasuredHeight() + childLayoutParams.topMargin + childLayoutParams.bottomMargin;
+//            MarginLayoutParams childLayoutParams = (MarginLayoutParams) child.getLayoutParams();
+            int childWidth = child.getMeasuredWidth();
+            int childHeight = child.getMeasuredHeight();
 
             lineHeight = Math.max(childHeight, lineHeight);
 
-            if (lineWidth + childWidth + paddingRight + paddingLeft >= widthSize) { // 需要换一行
-                lineWidth = childWidth; // 新的一行的宽度
+            if (lineWidth + childWidth > widthSize - paddingLeft - paddingRight) { // 需要换一行
+                resultWidth = Math.max(resultWidth, lineWidth); // 每一行都进行比较，最终得到最宽的值
+
+                lineWidth = (int) (childWidth + horizontalSpace); // 新的一行的宽度
                 lineHeight = childHeight; // 新的一行的高度
 
-                resultWidth = Math.max(resultWidth, lineWidth); // 每一行都进行比较，最终得到最宽的值
-                resultHeight += lineHeight + getChildYOffset(childLayoutParams);
+                resultHeight += verticalSpace + lineHeight;
             } else {
                 // 当前行的宽度
-                lineWidth += childWidth + getChildXOffset(childLayoutParams);
+                lineWidth += childWidth + horizontalSpace;
                 // 当前行最大的高度
                 lineHeight = Math.max(lineHeight, childHeight);
+            }
+
+            // 最后一个, 需要再次比较宽
+            if (i == getChildCount() - 1) {
+                resultWidth = Math.max(resultWidth, lineWidth);
             }
         }
 
@@ -151,76 +168,18 @@ public class SuperTagGroup extends ViewGroup {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-    private float getChildXOffset(MarginLayoutParams layoutParams) {
-        if (layoutParams.leftMargin != 0 || layoutParams.rightMargin != 0) {
-            return 0;
-        }
-        return horizontalSpace;
-    }
-
-    private float getChildYOffset(MarginLayoutParams layoutParams) {
-        if (layoutParams.topMargin != 0 || layoutParams.bottomMargin != 0) {
-            return 0;
-        }
-        return verticalSpace;
-    }
-
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         // padding
         int paddingLeft = getPaddingLeft();
         int paddingTop = getPaddingTop();
         int paddingRight = getPaddingRight();
-        int paddingBottom = getPaddingBottom();
 
-        int lineWidth = 0;
         int lineHeight = 0;
 
         // 子view的左侧和顶部位置
-        int childLeft = 0;
-        int childTop = 0;
-
-        for (int i = 0; i < getChildCount(); i++) {
-            View child = getChildAt(i);
-            if (child.getVisibility() == View.GONE) {
-                continue;
-            }
-
-            MarginLayoutParams childLayoutParams = (MarginLayoutParams) child.getLayoutParams();
-            int childWidth = child.getMeasuredWidth() + childLayoutParams.leftMargin + childLayoutParams.rightMargin;
-            int childHeight = child.getMeasuredHeight() + childLayoutParams.topMargin + childLayoutParams.bottomMargin;
-
-
-            lineHeight = Math.max(lineHeight, childHeight);
-
-            if (lineWidth + childWidth + paddingRight + paddingLeft > getWidth()) { // 需要换行
-                childLeft = paddingLeft;
-                childTop += lineHeight + getChildYOffset(childLayoutParams);
-
-                lineWidth = 0;
-                lineHeight = childHeight;
-            }
-
-            lineWidth += childWidth + getChildXOffset(childLayoutParams);
-
-            // 布局
-            child.layout(childLeft + childLayoutParams.leftMargin, childTop + childLayoutParams.topMargin, childLeft + childLayoutParams.leftMargin + childWidth, childTop + childLayoutParams.topMargin + childHeight);
-
-            // 计算下一个子view X的位置
-            childLeft += childWidth + getChildXOffset(childLayoutParams);
-        }
-    }
-
-    /*@Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        // padding
-        int paddingLeft = getPaddingLeft();
-        int paddingTop = getPaddingTop();
-        int paddingRight = getPaddingRight();
-        int paddingBottom = getPaddingBottom();
-
-        int lineWith = 0;
-        int lineHeight = 0;
+        int childLeft = paddingLeft;
+        int childTop = paddingTop;
 
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
@@ -233,24 +192,140 @@ public class SuperTagGroup extends ViewGroup {
 
             lineHeight = Math.max(lineHeight, childHeight);
 
-            if (childLeft + childWidth + paddingRight > getWidth()) {
+            if (childLeft + childWidth + paddingRight > getWidth()) { // 需要换行
                 childLeft = paddingLeft;
-                childTop += verticalSpace + lineHeight;
+                childTop += lineHeight + verticalSpace;
+
                 lineHeight = childHeight;
             }
 
+            // 布局
             child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+
+            // 计算下一个子view X的位置
             childLeft += childWidth + horizontalSpace;
         }
     }
-*/
 
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new MarginLayoutParams(getContext(), attrs);
     }
 
-    public void setTags() {
+    public void setOnTagClickListener(OnTagClickListener onTagClickListener) {
+        this.onTagClickListener = onTagClickListener;
+    }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        this.onTagClickListener = null;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            motionEvent = MotionEvent.obtain(event);
+        }
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean performClick() {
+        if (motionEvent != null) {
+            int x = (int) motionEvent.getX();
+            int y = (int) motionEvent.getY();
+            View view = findChildView(x, y);
+            int position = findChildViewPosition(view);
+
+            if (view != null) {
+                view.performClick();
+                if (onTagClickListener != null) {
+                    return onTagClickListener.onTagClick(position, ((SuperTagView) view).getITag());
+                }
+            }
+            motionEvent = null;
+        }
+        return super.performClick();
+    }
+
+    /**
+     * 根据坐标查找子view
+     *
+     * @param x
+     * @param y
+     * @return
+     */
+    private SuperTagView findChildView(int x, int y) {
+        for (int i = 0; i < getChildCount(); i++) {
+            View view = getChildAt(i);
+            if (view.getVisibility() == VISIBLE) {
+                Rect rect = new Rect();
+                view.getHitRect(rect);
+                if (rect.contains(x, y)) {
+                    return (SuperTagView) view;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 查找子view的位置
+     *
+     * @param view
+     * @return
+     */
+    private int findChildViewPosition(View view) {
+        if (view == null) {
+            return -1;
+        }
+        for (int i = 0; i < getChildCount(); i++) {
+            if (view == getChildAt(i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 设置tag组
+     *
+     * @param tagList
+     */
+    public void setTagList(List<ITag> tagList) {
+        removeAllViews();
+        appendTagList(tagList);
+    }
+
+    /**
+     * 添加tag组
+     *
+     * @param tagList
+     */
+    public void appendTagList(List<ITag> tagList) {
+        for (ITag tag : tagList) {
+            appendTag(tag);
+        }
+    }
+
+    /**
+     * append一个tag
+     *
+     * @param tag
+     */
+    public void appendTag(ITag tag) {
+        SuperTagView tagView = new SuperTagView(getContext());
+//        tagView.setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding);
+        tagView.setITag(tag);
+        addView(tagView);
+    }
+
+
+    public void setMaxSelectedNum(int maxSelectedNum) {
+        if (selectedViewPositions.size() > maxSelectedNum) {
+            selectedViewPositions.clear();
+        }
+        this.maxSelectedNum = maxSelectedNum;
     }
 }

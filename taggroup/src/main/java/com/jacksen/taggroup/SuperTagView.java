@@ -2,12 +2,12 @@ package com.jacksen.taggroup;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 
 /**
@@ -41,6 +41,16 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
 
     private RectF borderRectF;
 
+    private ITag iTag;
+
+    public ITag getITag() {
+        return iTag;
+    }
+
+    public void setITag(ITag iTag) {
+        this.iTag = iTag;
+        applyITag();
+    }
 
     public SuperTagView(Context context) {
         this(context, null);
@@ -54,7 +64,6 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
         super(context, attrs, defStyleAttr);
 
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SuperTagView, defStyleAttr, R.style.SuperTagGroup_TagView);
-//        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SuperTagView);
 
         isAppendTag = ta.getBoolean(R.styleable.SuperTagView_is_append_tag, false);
 
@@ -78,19 +87,17 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
      * init
      */
     private void init() {
-
         setGravity(Gravity.CENTER);
+
+        resetITag();
 
         if (getBackground() != null) {
             shouldCustomDraw = false;
             return;
         }
-
         //
         borderWidth = SuperTagUtil.dp2px(getContext(), borderWidth);
         cornerRadius = SuperTagUtil.dp2px(getContext(), cornerRadius);
-
-        //
 
 //        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding);
@@ -109,13 +116,31 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
         bgRectF = new RectF();
         borderRectF = new RectF();
 
-        //
     }
+
+    /**
+     * 针对在布局中添加的view 进行设置
+     */
+    private void resetITag() {
+        if (iTag == null) {
+            iTag = new ITagBean.Builder().setTag(getText())
+                    .setCornerRadius(cornerRadius)
+                    .setHorizontalPadding(horizontalPadding)
+                    .setVerticalPadding(verticalPadding)
+                    .setBorderColor(borderColor)
+                    .setBorderWidth(borderWidth)
+                    .setBgColor(bgColor)
+                    .create();
+        }
+    }
+
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        Log.d("SuperTagView", "onSizeChanged");
         if (shouldCustomDraw) {
+
             float left = borderWidth;
             float right = left + w - borderWidth * 2;
 
@@ -124,11 +149,28 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
 
             bgRectF.set(left, top, right, bottom);
 
-            if (borderWidth!=0){
+            if (borderWidth != 0) {
                 borderRectF.set(borderWidth / 2, borderWidth / 2, w - borderWidth / 2, h - borderWidth / 2);
             }
 
             setBackground(generateBackgroundDrawable());
+        }
+    }
+
+    /**
+     * 应用ITag属性
+     */
+    private void applyITag() {
+        if (iTag != null) {
+            setText(iTag.getText());
+            setId(iTag.getId());
+            this.cornerRadius = iTag.getCornerRadius();
+            if (iTag.getBackgroundDrawable() != null) {
+                setBackground(iTag.getBackgroundDrawable());
+            } else if (iTag.getBackgroundResourceId() != 0) {
+                setBackgroundResource(iTag.getBackgroundResourceId());
+            }
+
         }
     }
 

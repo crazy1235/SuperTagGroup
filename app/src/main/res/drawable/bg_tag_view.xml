@@ -6,6 +6,7 @@
             <stroke android:width="2dp" android:color="#fb435b" />
             <corners android:radius="15dp" />
             <solid android:color="#E0EEE0" />
+            <padding android:bottom="5dp" android:left="5dp" android:right="5dp" android:top="5dp" />
         </shape>
     </item>
     <!-- 标签的正常背景 -->
@@ -14,6 +15,7 @@
             <stroke android:width="2dp" android:color="#656565" />
             <corners android:radius="15dp" />
             <solid android:color="#E0EEE0" />
+            <padding android:bottom="5dp" android:left="5dp" android:right="5dp" android:top="5dp" />
         </shape>
     </item>
 </selector>
