@@ -4,7 +4,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.SparseIntArray;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,9 @@ import java.util.List;
  */
 public class SuperTagGroup extends ViewGroup {
 
-    private boolean isAppendMode = false;
+    private boolean hasAppendTag = false;
+
+    private boolean shouldAppend;
 
     private float horizontalSpace;
 
@@ -40,14 +43,19 @@ public class SuperTagGroup extends ViewGroup {
 
     private int tagBgDrawable;
 
-    private int maxSelectedNum;
+    //
+    private int maxSelectedNum = -1;
 
     private OnTagClickListener onTagClickListener;
 
     private MotionEvent motionEvent;
 
-    // 选中子view 的position集合
-    private SparseIntArray selectedViewPositions = new SparseIntArray();
+    // 选中子View 的集合
+    private SparseArray<View> selectedViews = new SparseArray<>();
+
+    // append tag
+    private SuperTagView latestAppendTagView;
+    private int appendTagIndex = -1;
 
     public SuperTagGroup(Context context) {
         this(context, null);
@@ -59,9 +67,9 @@ public class SuperTagGroup extends ViewGroup {
 
     public SuperTagGroup(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SuperTagGroup, defStyleAttr, R.style.SuperTagGroup);
-        isAppendMode = ta.getBoolean(R.styleable.SuperTagGroup_is_append_mode, false);
+
+        shouldAppend = ta.getBoolean(R.styleable.SuperTagGroup_should_append, false);
 
         horizontalSpace = ta.getDimension(R.styleable.SuperTagGroup_horizontal_spacing, 0);
         verticalSpace = ta.getDimension(R.styleable.SuperTagGroup_vertical_spacing, 0);
@@ -89,15 +97,15 @@ public class SuperTagGroup extends ViewGroup {
     }
 
     private void init() {
+        setClickable(true);
+
         horizontalSpace = SuperTagUtil.dp2px(getContext(), horizontalSpace);
         verticalSpace = SuperTagUtil.dp2px(getContext(), verticalSpace);
-
-        setClickable(true);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
+        Log.d("SuperTagGroup", "onMeasure");
         // width size & mode
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
@@ -170,6 +178,7 @@ public class SuperTagGroup extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        Log.d("SuperTagGroup", "onLayout");
         // padding
         int paddingLeft = getPaddingLeft();
         int paddingTop = getPaddingTop();
@@ -185,6 +194,16 @@ public class SuperTagGroup extends ViewGroup {
             View child = getChildAt(i);
             if (child.getVisibility() == View.GONE) {
                 continue;
+            }
+
+            // 找到最后一个append tag
+            if (((SuperTagView) child).isAppendTag()) {
+                if (appendTagIndex != -1 && latestAppendTagView != null) {
+                    latestAppendTagView.setAppendTag(false);
+                }
+                appendTagIndex = i;
+                ((SuperTagView) child).setAppendTag(true);
+                latestAppendTagView = (SuperTagView) child;
             }
 
             int childWidth = child.getMeasuredWidth();
@@ -240,13 +259,49 @@ public class SuperTagGroup extends ViewGroup {
 
             if (view != null) {
                 view.performClick();
+                boolean result = selectChildView((SuperTagView) view, position);
                 if (onTagClickListener != null) {
+                    if (result) {
+                        onTagClickListener.onSelected(selectedViews);
+                    }
                     return onTagClickListener.onTagClick(position, ((SuperTagView) view).getITag());
                 }
             }
             motionEvent = null;
         }
         return super.performClick();
+    }
+
+    /**
+     * 选中一个子view，内部判断选中个数等逻辑
+     *
+     * @param view
+     * @param position
+     * @return
+     */
+    private boolean selectChildView(SuperTagView view, int position) {
+        if (view.isAppendTag()) {
+            return false;
+        }
+        if (view.isChecked()) { // 已经被check
+            view.setChecked(false);
+            selectedViews.remove(position);
+            return true;
+        } else {
+            if (maxSelectedNum == -1 || selectedViews.size() < maxSelectedNum) { // 选中个数没超限
+                view.setChecked(true);
+                selectedViews.put(position, view);
+            } else if (selectedViews.size() == 1 && maxSelectedNum == 1) { // 最多选中一个
+                SuperTagView preView = (SuperTagView) selectedViews.valueAt(0);
+                preView.setChecked(false);
+                selectedViews.clear();
+                view.setChecked(true);
+                selectedViews.put(position, view);
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -316,15 +371,49 @@ public class SuperTagGroup extends ViewGroup {
      */
     public void appendTag(ITag tag) {
         SuperTagView tagView = new SuperTagView(getContext());
-//        tagView.setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding);
         tagView.setITag(tag);
-        addView(tagView);
+
+        if (tag.isAppendTag() && appendTagIndex != -1) { // 如果已经有了append tag，把上一个append tag状态移除
+            ((SuperTagView) getChildAt(appendTagIndex)).setAppendTag(false);
+        }
+
+        if (tag.isAppendTag() || appendTagIndex == -1) { // 添加append tag或者 目前没有append tag添加普通tag 的情况
+            addView(tagView);
+        } else {
+            addView(tagView, appendTagIndex++); // 注意 ++ 操作
+        }
     }
 
 
+    @Override
+    public void removeView(View view) {
+        Log.d("SuperTagGroup", "((SuperTagView) view).isAppendTag():" + ((SuperTagView) view).isAppendTag());
+        if (((SuperTagView) view).isAppendTag()) {
+            appendTagIndex = -1;
+        }
+        super.removeView(view);
+    }
+
+    @Override
+    public void removeViewAt(int index) {
+        Log.d("SuperTagGroup", "getChildCount():" + getChildCount());
+        removeView(getChildAt(index));
+    }
+
+    @Override
+    public void removeViews(int start, int count) {
+        final int end = start + count;
+        if (start < 0 || count < 0 || end > getChildCount()) {
+            throw new IndexOutOfBoundsException();
+        }
+        for (int i = start; i < end; i++) {
+            removeView(getChildAt(i));
+        }
+    }
+
     public void setMaxSelectedNum(int maxSelectedNum) {
-        if (selectedViewPositions.size() > maxSelectedNum) {
-            selectedViewPositions.clear();
+        if (selectedViews.size() > maxSelectedNum) {
+            selectedViews.clear();
         }
         this.maxSelectedNum = maxSelectedNum;
     }

@@ -2,43 +2,38 @@ package com.jacksen.taggroup;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
+import android.widget.Checkable;
 
 /**
  * Created by jacksen on 2017/7/8.
  */
 
-public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
+public class SuperTagView extends android.support.v7.widget.AppCompatTextView implements Checkable {
 
     private boolean isAppendTag = false;
 
     private int horizontalPadding;
-
     private int verticalPadding;
-
     private float cornerRadius;
-
     private float borderWidth;
 
     private int borderColor;
-
     private int bgColor;
+
+    private int borderCheckedColor;
+    private int bgCheckedColor;
 
     //
     private boolean shouldCustomDraw = true;
 
-    private Paint bgPaint;
-
-    private Paint borderPaint;
-
     private RectF bgRectF;
-
     private RectF borderRectF;
 
     private ITag iTag;
@@ -51,6 +46,7 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
         this.iTag = iTag;
         applyITag();
     }
+
 
     public SuperTagView(Context context) {
         this(context, null);
@@ -73,9 +69,12 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
         cornerRadius = ta.getDimension(R.styleable.SuperTagView_corner_radius, 0);
 
         borderWidth = ta.getDimension(R.styleable.SuperTagView_border_width, 0);
-        borderColor = ta.getColor(R.styleable.SuperTagView_border_color, SuperTagUtil.DEFAULT_TAG_BORDER_COLOR);
 
+        borderColor = ta.getColor(R.styleable.SuperTagView_border_color, SuperTagUtil.DEFAULT_TAG_BORDER_COLOR);
         bgColor = ta.getColor(R.styleable.SuperTagView_bg_color, SuperTagUtil.DEFAULT_TAG_BG_COLOR);
+
+        borderCheckedColor = ta.getColor(R.styleable.SuperTagView_border_checked_color, 0);
+        bgCheckedColor = ta.getColor(R.styleable.SuperTagView_bg_checked_color, 0);
 
         ta.recycle();
 
@@ -102,20 +101,17 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
 //        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding);
 
-        // init paint
-        bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        bgPaint.setStyle(Paint.Style.FILL);
-        bgPaint.setColor(bgColor);
-
-
-        borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setColor(borderColor);
-
         // init rect
         bgRectF = new RectF();
         borderRectF = new RectF();
+    }
 
+    public boolean isAppendTag() {
+        return isAppendTag;
+    }
+
+    public void setAppendTag(boolean appendTag) {
+        isAppendTag = appendTag;
     }
 
     /**
@@ -130,6 +126,7 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
                     .setBorderColor(borderColor)
                     .setBorderWidth(borderWidth)
                     .setBgColor(bgColor)
+                    .setAppendTag(isAppendTag)
                     .create();
         }
     }
@@ -170,12 +167,50 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView {
             } else if (iTag.getBackgroundResourceId() != 0) {
                 setBackgroundResource(iTag.getBackgroundResourceId());
             }
-
         }
     }
 
+    /**
+     * background drawable
+     *
+     * @return
+     */
     private Drawable generateBackgroundDrawable() {
-        return new TagBgDrawable(bgColor, bgRectF, borderColor, borderRectF, borderWidth, cornerRadius);
+        StateListDrawable stateListDrawable = new StateListDrawable();
+        stateListDrawable.addState(CHECK_STATE, new TagBgDrawable(bgCheckedColor, bgRectF, borderCheckedColor, borderRectF, borderWidth, cornerRadius));
+        stateListDrawable.addState(new int[]{}, new TagBgDrawable(bgColor, bgRectF, borderColor, borderRectF, borderWidth, cornerRadius));
+        return stateListDrawable;
     }
 
+    //
+    private static final int[] CHECK_STATE = new int[]{android.R.attr.state_checked, android.R.attr.state_selected};
+
+    private boolean isChecked;
+
+    @Override
+    protected int[] onCreateDrawableState(int extraSpace) {
+        int[] states = super.onCreateDrawableState(extraSpace + CHECK_STATE.length);
+        if (isChecked()) {
+            mergeDrawableStates(states, CHECK_STATE);
+        }
+        return states;
+    }
+
+    @Override
+    public void setChecked(boolean checked) {
+        if (this.isChecked != checked) {
+            this.isChecked = checked;
+            refreshDrawableState();
+        }
+    }
+
+    @Override
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    @Override
+    public void toggle() {
+        setChecked(!isChecked);
+    }
 }

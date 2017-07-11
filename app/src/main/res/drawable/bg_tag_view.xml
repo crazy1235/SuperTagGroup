@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- 标签选中时的背景 -->
-    <item android:state_selected="true">
+    <item android:state_checked="true" android:state_pressed="true">
         <shape>
-            <stroke android:width="2dp" android:color="#fb435b" />
+            <stroke android:width="2dp" android:color="#6ba0e6" />
             <corners android:radius="15dp" />
-            <solid android:color="#E0EEE0" />
-            <padding android:bottom="5dp" android:left="5dp" android:right="5dp" android:top="5dp" />
+            <solid android:color="#fb435b" />
+            <padding android:bottom="10dp" android:left="10dp" android:right="10dp" android:top="10dp" />
         </shape>
     </item>
     <!-- 标签的正常背景 -->
     <item>
         <shape>
-            <stroke android:width="2dp" android:color="#656565" />
+            <stroke android:width="2dp" android:color="#969090" />
             <corners android:radius="15dp" />
             <solid android:color="#E0EEE0" />
-            <padding android:bottom="5dp" android:left="5dp" android:right="5dp" android:top="5dp" />
+            <padding android:bottom="10dp" android:left="10dp" android:right="10dp" android:top="10dp" />
         </shape>
     </item>
 </selector>

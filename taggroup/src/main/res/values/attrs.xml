@@ -3,7 +3,7 @@
 
     <declare-styleable name="SuperTagGroup">
 
-        <attr name="is_append_mode" format="boolean" />
+        <attr name="should_append" format="boolean" />
 
         <attr name="horizontal_spacing" format="dimension" />
 
@@ -54,6 +54,10 @@
         <attr name="border_color" format="color" />
 
         <attr name="bg_color" format="color" />
+
+        <attr name="border_checked_color" format="color" />
+
+        <attr name="bg_checked_color" format="color" />
 
     </declare-styleable>
 

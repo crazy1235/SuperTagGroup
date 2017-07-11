@@ -29,32 +29,6 @@ public class SuperTagUtil {
     public static final int DEFAULT_MAX_SELECTED_NUM = 5;
 
     /**
-     * tags selected type
-     */
-    enum SelectType {
-        NONE(0),
-        SINGLE(1),
-        MULTIPLE(2);
-        int value;
-
-        SelectType(int value) {
-            this.value = value;
-        }
-
-        SelectType get(int value) {
-            switch (value) {
-                case 0:
-                default:
-                    return NONE;
-                case 1:
-                    return SINGLE;
-                case 2:
-                    return MULTIPLE;
-            }
-        }
-    }
-
-    /**
      * dp to px
      *
      * @param context

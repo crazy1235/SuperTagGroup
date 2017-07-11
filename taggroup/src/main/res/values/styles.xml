@@ -9,6 +9,12 @@
     <style name="SuperTagGroup.TagView">
         <item name="horizontal_padding">12dp</item>
         <item name="vertical_padding">8dp</item>
+
+        <item name="border_color">#eac1b5</item>
+        <item name="border_checked_color">#1fef1f</item>
+        <item name="bg_color">#abb38e</item>
+        <item name="bg_checked_color">#e6a580</item>
+
     </style>
 
 </resources>
