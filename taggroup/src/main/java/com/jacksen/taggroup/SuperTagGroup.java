@@ -149,11 +149,10 @@ public class SuperTagGroup extends ViewGroup {
 
             if (lineWidth + childWidth > widthSize - paddingLeft - paddingRight) { // 需要换一行
                 resultWidth = Math.max(resultWidth, lineWidth); // 每一行都进行比较，最终得到最宽的值
+                resultHeight += verticalSpace + lineHeight;
 
                 lineWidth = (int) (childWidth + horizontalSpace); // 新的一行的宽度
                 lineHeight = childHeight; // 新的一行的高度
-
-                resultHeight += verticalSpace + lineHeight;
             } else {
                 // 当前行的宽度
                 lineWidth += childWidth + horizontalSpace;
@@ -173,7 +172,7 @@ public class SuperTagGroup extends ViewGroup {
 
         setMeasuredDimension(widthMode == MeasureSpec.EXACTLY ? widthSize : resultWidth, heightMode == MeasureSpec.EXACTLY ? heightSize : resultHeight);
 
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
