@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 25
@@ -20,6 +21,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.5.0'
+    }
 }
 
 dependencies {
@@ -29,4 +40,48 @@ dependencies {
     })
     implementation 'com.android.support:appcompat-v7:25.4.0'
     testImplementation 'junit:junit:4.12'
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    options{
+        encoding "UTF-8"
+        charSet 'UTF-8'
+        links "http://docs.oracle.com/javase/7/docs/api"
+    }
+    failOnError false
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+allprojects{
+    tasks.withType(Javadoc){
+        options.addStringOption('encoding', 'UTF-8')
+    }
+}
+
+artifacts{
+    archives javadocJar
+    archives sourcesJar
+}
+
+
+publish {
+    bintrayUser = properties.get("bintray.user")
+    bintrayKey = properties.get("bintray.apikey")
+    userOrg = 'crazy1235'
+    groupId = 'com.jacksen'
+    artifactId = 'supertaggroup'
+    publishVersion = '1.0'
+    desc = 'https://github.com/crazy1235/SuperTagGroup'
+    website = 'https://github.com/crazy1235/SuperTagGroup'
 }

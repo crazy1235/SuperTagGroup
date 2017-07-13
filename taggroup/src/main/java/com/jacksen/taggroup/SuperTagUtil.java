@@ -31,9 +31,9 @@ public class SuperTagUtil {
     /**
      * dp to px
      *
-     * @param context
-     * @param dpValue
-     * @return
+     * @param context context
+     * @param dpValue dp
+     * @return px
      */
     public static int dp2px(Context context, float dpValue) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue, context.getResources().getDisplayMetrics());
@@ -42,9 +42,9 @@ public class SuperTagUtil {
     /**
      * sp to px
      *
-     * @param context
-     * @param spValue
-     * @return
+     * @param context context
+     * @param spValue sp
+     * @return px
      */
     public static float sp2px(Context context, float spValue) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spValue, context.getResources().getDisplayMetrics());
@@ -55,7 +55,7 @@ public class SuperTagUtil {
     /**
      * generate view id
      *
-     * @return
+     * @return view id
      */
     public static int generateViewId() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {

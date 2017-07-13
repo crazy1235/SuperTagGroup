@@ -338,7 +338,7 @@ public class SuperTagGroup extends ViewGroup {
     /**
      * 设置tag组
      *
-     * @param tagList
+     * @param tagList 标签集合
      */
     public void setTagList(List<ITag> tagList) {
         removeAllViews();
@@ -348,7 +348,7 @@ public class SuperTagGroup extends ViewGroup {
     /**
      * 添加tag组
      *
-     * @param tagList
+     * @param tagList 标签集合
      */
     public void appendTagList(List<ITag> tagList) {
         for (ITag tag : tagList) {
@@ -359,7 +359,7 @@ public class SuperTagGroup extends ViewGroup {
     /**
      * append一个tag
      *
-     * @param tag
+     * @param tag 标签
      */
     public void appendTag(ITag tag) {
         SuperTagView tagView = new SuperTagView(getContext());

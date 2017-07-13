@@ -11,19 +11,10 @@ import android.support.annotation.Nullable;
 
 /**
  * @author jacksen
- *         <br/>
  * @since 2016
  */
 
 public class TagBgDrawable extends Drawable {
-
-    private int borderColor;
-
-    private int bgColor;
-
-    private int horizontalPadding;
-
-    private int verticalPadding;
 
     private Paint bgPaint;
 

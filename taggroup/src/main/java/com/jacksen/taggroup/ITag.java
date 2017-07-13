@@ -5,7 +5,6 @@ import android.support.annotation.DrawableRes;
 
 /**
  * @author jacksen
- *         <br/>
  * @since 2016
  */
 
