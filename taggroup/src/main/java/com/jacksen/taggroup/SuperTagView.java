@@ -12,7 +12,7 @@ import android.view.Gravity;
 import android.widget.Checkable;
 
 /**
- * Created by jacksen on 2017/7/8.
+ * Created by jacksen on 2016.
  */
 
 public class SuperTagView extends android.support.v7.widget.AppCompatTextView implements Checkable {
@@ -30,7 +30,6 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView im
     private int borderCheckedColor;
     private int bgCheckedColor;
 
-    //
     private boolean shouldCustomDraw = true;
 
     private RectF bgRectF;
@@ -47,6 +46,37 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView im
         applyITag();
     }
 
+    public void setHorizontalPadding(int horizontalPadding) {
+        this.horizontalPadding = horizontalPadding;
+    }
+
+    public void setVerticalPadding(int verticalPadding) {
+        this.verticalPadding = verticalPadding;
+    }
+
+    public void setCornerRadius(float cornerRadius) {
+        this.cornerRadius = cornerRadius;
+    }
+
+    public void setBorderWidth(float borderWidth) {
+        this.borderWidth = borderWidth;
+    }
+
+    public void setBorderColor(int borderColor) {
+        this.borderColor = borderColor;
+    }
+
+    public void setBgColor(int bgColor) {
+        this.bgColor = bgColor;
+    }
+
+    public void setBorderCheckedColor(int borderCheckedColor) {
+        this.borderCheckedColor = borderCheckedColor;
+    }
+
+    public void setBgCheckedColor(int bgCheckedColor) {
+        this.bgCheckedColor = bgCheckedColor;
+    }
 
     public SuperTagView(Context context) {
         this(context, null);
@@ -167,6 +197,41 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView im
             } else if (iTag.getBackgroundResourceId() != 0) {
                 setBackgroundResource(iTag.getBackgroundResourceId());
             }
+
+
+            if (iTag.getHorizontalPadding() != 0) {
+                setHorizontalPadding(iTag.getHorizontalPadding());
+            }
+            if (iTag.getVerticalPadding() != 0) {
+                setVerticalPadding(iTag.getVerticalPadding());
+            }
+            if (iTag.getTextSize() != 0) {
+                setTextSize(iTag.getTextSize());
+            }
+            if (iTag.getTextColor() != 0) {
+                setTextColor(iTag.getTextColor());
+            }
+            if (iTag.getCornerRadius() != 0) {
+                setCornerRadius(iTag.getCornerRadius());
+            }
+            if (iTag.getBorderWidth() != 0) {
+                setBorderWidth(iTag.getBorderWidth());
+            }
+            if (iTag.getBorderColor() != 0) {
+                setBorderColor(iTag.getBorderColor());
+            }
+            if (iTag.getTagBgColor() != 0) {
+                setBgColor(iTag.getTagBgColor());
+            }
+            if (iTag.getCheckedBorderColor() != 0) {
+                setBorderCheckedColor(iTag.getCheckedBorderColor());
+            }
+            if (iTag.getTagCheckedBgColor() != 0) {
+                setBgCheckedColor(iTag.getTagCheckedBgColor());
+            }
+
+            requestLayout();
+            invalidate();
         }
     }
 

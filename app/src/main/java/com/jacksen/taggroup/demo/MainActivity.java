@@ -1,5 +1,6 @@
 package com.jacksen.taggroup.demo;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String mNames[] = {"演员", "海阔天空", "变了", "Beyond", "Fade", "Lebron James",
             "父亲写的散文诗", "android studio", "xcode", "王菲", "All of me", "刘德华", "Cover", "WTF", "12134", "山丘"
     };
+
+    private int colors[] = {Color.RED, Color.BLUE, Color.CYAN, Color.YELLOW, Color.GREEN, Color.MAGENTA,
+            Color.parseColor("#F08080"), Color.parseColor("#E0FFFF"), Color.parseColor("#87CEEB")};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ITagBean tagBean = builder.setTag(mNames[new Random().nextInt(mNames.length - 1)])
                 .setCornerRadius(SuperTagUtil.dp2px(this, 7.0f))
                 .setHorizontalPadding(SuperTagUtil.dp2px(this, 10))
+                .setBgColor(colors[new Random().nextInt(colors.length - 1)])
                 .create();
         tagGroup.appendTag(tagBean);
     }

@@ -4,7 +4,7 @@ import android.util.SparseArray;
 import android.view.View;
 
 /**
- * Created by jacksen on 2017/7/11.
+ * Created by jacksen on 2016
  */
 
 public abstract class SimpleTagListener implements OnTagClickListener {

@@ -13,35 +13,27 @@ import android.view.ViewGroup;
 import java.util.List;
 
 /**
- * Created by jacksen on 2017/7/7.
+ * Created by jacksen on 2016
  */
 public class SuperTagGroup extends ViewGroup {
-
-    private boolean hasAppendTag = false;
-
-    private boolean shouldAppend;
 
     private float horizontalSpace;
 
     private float verticalSpace;
 
+    // tag
     private int horizontalPadding;
-
     private int verticalPadding;
-
     private float textSize;
-
     private int textColor;
-
     private float cornerRadius;
-
     private float borderWidth;
-
     private int borderColor;
-
     private int tagBgColor;
-
     private int tagBgDrawable;
+    private int tagBgCheckedColor;
+    private int tagBorderCheckedColor;
+
 
     //
     private int maxSelectedNum = -1;
@@ -69,8 +61,6 @@ public class SuperTagGroup extends ViewGroup {
         super(context, attrs, defStyleAttr);
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SuperTagGroup, defStyleAttr, R.style.SuperTagGroup);
 
-        shouldAppend = ta.getBoolean(R.styleable.SuperTagGroup_should_append, false);
-
         horizontalSpace = ta.getDimension(R.styleable.SuperTagGroup_horizontal_spacing, 0);
         verticalSpace = ta.getDimension(R.styleable.SuperTagGroup_vertical_spacing, 0);
 
@@ -84,8 +74,11 @@ public class SuperTagGroup extends ViewGroup {
 
         borderWidth = ta.getDimension(R.styleable.SuperTagGroup_tag_border_width, 0);
         borderColor = ta.getColor(R.styleable.SuperTagGroup_tag_border_color, 0);
+        tagBorderCheckedColor = ta.getColor(R.styleable.SuperTagGroup_tag_border_checked_color, 0);
+
 
         tagBgColor = ta.getColor(R.styleable.SuperTagGroup_tag_bg_color, 0);
+        tagBgCheckedColor = ta.getColor(R.styleable.SuperTagGroup_tag_bg_checked_color, 0);
 
         tagBgDrawable = ta.getResourceId(R.styleable.SuperTagGroup_tag_bg_drawable, 0);
 
@@ -370,17 +363,59 @@ public class SuperTagGroup extends ViewGroup {
      */
     public void appendTag(ITag tag) {
         SuperTagView tagView = new SuperTagView(getContext());
-        tagView.setITag(tag);
+        tagView.setITag(generateNewITag(tag));
 
         if (tag.isAppendTag() && appendTagIndex != -1) { // 如果已经有了append tag，把上一个append tag状态移除
             ((SuperTagView) getChildAt(appendTagIndex)).setAppendTag(false);
         }
-
         if (tag.isAppendTag() || appendTagIndex == -1) { // 添加append tag或者 目前没有append tag添加普通tag 的情况
             addView(tagView);
         } else {
             addView(tagView, appendTagIndex++); // 注意 ++ 操作
         }
+    }
+
+    /**
+     * 将tag部分没有设置的属性应用从xml读取的值
+     *
+     * @param tag
+     * @return
+     */
+    private ITag generateNewITag(ITag tag) {
+        if (tag.getHorizontalPadding() == 0) {
+            tag.setHorizontalPadding(horizontalPadding);
+        }
+        if (tag.getVerticalPadding() == 0) {
+            tag.setVerticalPadding(verticalPadding);
+        }
+        if (tag.getTextSize() == 0) {
+            tag.setTextSize(textSize);
+        }
+        if (tag.getTextColor() == 0) {
+            tag.setTextColor(textColor);
+        }
+        if (tag.getCornerRadius() == 0) {
+            tag.setCornerRadius(cornerRadius);
+        }
+        if (tag.getBorderWidth() == 0) {
+            tag.setBorderWidth(borderWidth);
+        }
+        if (tag.getBorderColor() == 0) {
+            tag.setBorderColor(borderColor);
+        }
+        if (tag.getTagBgColor() == 0) {
+            tag.setTagBgColor(tagBgColor);
+        }
+        if (tag.getBackgroundResourceId() == 0) {
+            tag.tagBgDrawable(tagBgDrawable);
+        }
+        if (tag.getCheckedBorderColor() != 0) {
+            tag.setCheckedBorderColor(tagBorderCheckedColor);
+        }
+        if (tag.getTagCheckedBgColor() != 0) {
+            tag.setTagBgColor(tagBgCheckedColor);
+        }
+        return tag;
     }
 
 

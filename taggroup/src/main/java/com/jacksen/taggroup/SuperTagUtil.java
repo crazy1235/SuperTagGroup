@@ -9,7 +9,7 @@ import android.view.View;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created by jacksen on 2017/7/8.
+ * Created by jacksen on 2016
  */
 
 public class SuperTagUtil {

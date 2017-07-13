@@ -3,8 +3,6 @@
 
     <declare-styleable name="SuperTagGroup">
 
-        <attr name="should_append" format="boolean" />
-
         <attr name="horizontal_spacing" format="dimension" />
 
         <attr name="vertical_spacing" format="dimension" />
@@ -23,17 +21,15 @@
 
         <attr name="tag_border_color" format="color" />
 
+        <attr name="tag_border_checked_color" format="color" />
+
         <attr name="tag_bg_color" format="color" />
+
+        <attr name="tag_bg_checked_color" format="color" />
 
         <attr name="tag_bg_drawable" format="reference" />
 
         <attr name="max_selected_count" format="integer" />
-
-        <attr name="select_type" format="enum">
-            <enum name="none" value="0" />
-            <enum name="single" value="1" />
-            <enum name="multiple" value="2" />
-        </attr>
 
     </declare-styleable>
 
@@ -53,9 +49,9 @@
 
         <attr name="border_color" format="color" />
 
-        <attr name="bg_color" format="color" />
-
         <attr name="border_checked_color" format="color" />
+
+        <attr name="bg_color" format="color" />
 
         <attr name="bg_checked_color" format="color" />
 

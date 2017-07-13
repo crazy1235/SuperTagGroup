@@ -4,7 +4,6 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -13,7 +12,7 @@ import android.support.annotation.Nullable;
 /**
  * @author jacksen
  *         <br/>
- * @since 2017/7/9
+ * @since 2016
  */
 
 public class TagBgDrawable extends Drawable {
