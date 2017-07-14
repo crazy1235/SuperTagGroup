@@ -179,8 +179,7 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView im
             if (borderWidth != 0) {
                 borderRectF.set(borderWidth / 2, borderWidth / 2, w - borderWidth / 2, h - borderWidth / 2);
             }
-
-            setBackground(generateBackgroundDrawable());
+            setBackgroundDrawable(generateBackgroundDrawable());
         }
     }
 
@@ -193,7 +192,7 @@ public class SuperTagView extends android.support.v7.widget.AppCompatTextView im
             setId(iTag.getId());
             this.cornerRadius = iTag.getCornerRadius();
             if (iTag.getBackgroundDrawable() != null) {
-                setBackground(iTag.getBackgroundDrawable());
+                setBackgroundDrawable(iTag.getBackgroundDrawable());
             } else if (iTag.getBackgroundResourceId() != 0) {
                 setBackgroundResource(iTag.getBackgroundResourceId());
             }

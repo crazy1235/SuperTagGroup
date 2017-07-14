@@ -16,7 +16,7 @@ SuperTagGroup
  - 添加库依赖
  
  ```
-     compile 'com.jacksen:supertaggroup:1.0'
+     compile 'com.jacksen:supertaggroup:1.1'
  ```
  
  - 在布局文件中添加SuperTagGroup
