@@ -16,7 +16,7 @@ SuperTagGroup
  - 添加库依赖
  
  ```
-     compile 'com.jacksen.supertaggroup:1.0' 
+     compile 'com.jacksen:supertaggroup:1.0'
  ```
  
  - 在布局文件中添加SuperTagGroup
@@ -174,3 +174,7 @@ SuperTagGroup
         <attr name="bg_checked_color" format="color" />             // 标签选中时背景颜色
 ```
 
+
+### blog介绍
+
+> http://blog.csdn.net/crazy1235/article/details/74907150

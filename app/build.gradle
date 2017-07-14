@@ -28,4 +28,7 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:25.4.0'
     implementation 'com.android.support:design:25.4.0'
     implementation project(':taggroup')
+
+//    implementation 'com.jacksen:supertaggroup:1.0'
+
 }
